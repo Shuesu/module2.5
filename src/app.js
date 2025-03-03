@@ -1,13 +1,22 @@
-import React from 'react';
+import { useEffect, useState } from 'react';
+import styles from './app.module.css'
+import { Todo } from './components'
 
 export const App = () => {
+	const [todos, setTodos] = useState([]);
+
+	useEffect(() => {
+		fetch('https://jsonplaceholder.typicode.com/todos')
+			.then((todosData) => todosData.json())
+			.then((loadedTodos) => setTodos(loadedTodos));
+	}, [])
+
 	return (
-		<div>
+		<div className={styles.app}>
 			<div>
-				<h1>Заголовок приложения</h1>
-				<div>
-					{/* Добавьте ваш контент здесь */}
-				</div>
+				{todos.map(({ id, title, completed }) => (
+					<Todo key={id} title={title} completed={completed} />
+				))}
 			</div>
 		</div>
 	);
