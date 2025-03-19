@@ -9,3 +9,9 @@
 input[type='checkbox'] {
 	accent-color: green;
 }
+
+.todo {
+	display: flex;
+	gap: 10px;
+	/* Временно gap */
+}
