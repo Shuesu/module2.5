@@ -1,7 +1,6 @@
 .app {
-	border: 1px solid black;
-	border-radius: 20px;
 	width: 500px;
-	margin: 40px auto;
-	padding: 20px;
+	margin: 50px auto;
+	border: 2px solid #444;
+	border-radius: 10px;
 }

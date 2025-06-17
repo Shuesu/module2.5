@@ -1,2 +1,2 @@
-export * from './todo/todo'
-export * from './controlPanel/controlPanel'
+export * from './todo/todo';
+export * from './control-panel/control-panel';

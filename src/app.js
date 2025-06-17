@@ -1,23 +1,31 @@
-import { useEffect, useState } from 'react'
-import styles from './app.module.css'
-import { Todo, ControlPanel } from './components'
-import { createTodo, readTodos, updateTodo, deleteTodo } from './api'
-import { AddTodoInTodos, findTodo, setTodoInTodos, removeTodoInTodos } from './utils'
-import { NEW_TODO_ID } from './constants'
+import { useEffect, useState } from 'react';
+import { ControlPanel, Todo } from './components';
+import { createTodo, readTodos, updateTodo, deleteTodo } from './api';
+import { addTodoInTodos, findTodo, removeTodoInTodos, setTodoInTodos } from './utils';
+import { NEW_TODO_ID } from './constants';
+import styles from './app.module.css';
 
 export const App = () => {
 	const [todos, setTodos] = useState([]);
+	const [searchPhrase, setSearchPhrase] = useState('');
+	const [isAlphabetSorting, setIsAlphabetSorting] = useState(false);
 
 	const onTodoAdd = () => {
-		setTodos(AddTodoInTodos(todos));
-	}
+		setTodos(addTodoInTodos(todos));
+	};
 
 	const onTodoSave = (todoId) => {
 		const { title, completed } = findTodo(todos, todoId) || {};
 
 		if (todoId === NEW_TODO_ID) {
-			createTodo({ title, completed }).then(({ id }) => {
-				setTodos(setTodoInTodos(todos, { id, isEditing: false }));
+			createTodo({ title, completed }).then((todo) => {
+				let updatedTodos = setTodoInTodos(todos, {
+					id: NEW_TODO_ID,
+					isEditing: false,
+				});
+				updatedTodos = removeTodoInTodos(updatedTodos, NEW_TODO_ID);
+				updatedTodos = addTodoInTodos(updatedTodos, todo);
+				setTodos(updatedTodos);
 			});
 		} else {
 			updateTodo({ id: todoId, title }).then(() => {
@@ -45,12 +53,18 @@ export const App = () => {
 	};
 
 	useEffect(() => {
-		readTodos().then((loadedTodos) => setTodos(loadedTodos).reverse());
-	}, [])
+		readTodos(searchPhrase, isAlphabetSorting).then((loadedTodos) =>
+			setTodos(loadedTodos),
+		);
+	}, [searchPhrase, isAlphabetSorting]);
 
 	return (
 		<div className={styles.app}>
-			<ControlPanel onTodoAdd={onTodoAdd} />
+			<ControlPanel
+				onTodoAdd={onTodoAdd}
+				onSearch={setSearchPhrase}
+				onSorting={setIsAlphabetSorting}
+			/>
 			<div>
 				{todos.map(({ id, title, completed, isEditing = false }) => (
 					<Todo
@@ -61,7 +75,9 @@ export const App = () => {
 						isEditing={isEditing}
 						onEdit={() => onTodoEdit(id)}
 						onTitleChange={(newTitle) => onTodoTitleChange(id, newTitle)}
-						onCompletedChange={(newCompleted) => onTodoCompletedChange(id, newCompleted)}
+						onCompletedChange={(newCompleted) =>
+							onTodoCompletedChange(id, newCompleted)
+						}
 						onSave={() => onTodoSave(id)}
 						onRemove={() => onTodoRemove(id)}
 					/>

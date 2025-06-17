@@ -1,6 +1,12 @@
-import { NEW_TODO_ID } from '../constants'
+import { NEW_TODO_ID } from '../constants';
 
-export const AddTodoInTodos = (todos) => [
-   { id: NEW_TODO_ID, title: '', completed: false, isEditing: true },
-   ...todos,
-]
+export const addTodoInTodos = (todos, todo) => {
+	const newTodo = todo || {
+		id: NEW_TODO_ID,
+		title: '',
+		completed: false,
+		isEditing: true,
+	};
+
+	return [newTodo, ...todos];
+};
