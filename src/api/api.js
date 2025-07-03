@@ -1,3 +1,5 @@
+import { get, orderByChild, query, ref } from 'firebase/database'
+import { db } from '../firebase';
 import { HTTP_METHOD } from '../constants';
 
 const fetchServer = (method, { id, ...payload } = {}) => {
@@ -28,8 +30,14 @@ const fetchServer = (method, { id, ...payload } = {}) => {
 
 export const createTodo = (newTodo) => fetchServer('POST', newTodo);
 
-export const readTodos = (searchPhrase = '', isAlphabetSorting = false) =>
-	fetchServer('GET', { searchPhrase, isAlphabetSorting });
+export const readTodos = (searchPhrase = '', isAlphabetSorting = false) => {
+	const todosDbRef = ref(db, 'todos');
+	const orderingField = isAlphabetSorting ? 'title' : 'id';
+
+	return get(query(todosDbRef, orderByChild(orderingField)));
+}
+
+fetchServer('GET', { searchPhrase, isAlphabetSorting });
 
 export const updateTodo = (todoData) => fetchServer('PATCH', todoData);
 
